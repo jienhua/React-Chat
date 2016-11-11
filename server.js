@@ -1,19 +1,32 @@
 var express = require('express')
-var path = require('path')
-var compression = require('compression')
+var app     = express()
+var path    = require('path')
+var http    = require('http').Server(app)
+var morgan  = require('morgan')
+var io      = require('socket.io')(http)
+// var compression = require('compression')
 
-var app = express()
-
-app.use(compression())
-// serve our static stuff like index.css
+// app.use(compression())
+app.use(morgan('dev'))
 app.use(express.static(path.join(__dirname, 'dist')))
 
-// send all requests to index.html so browserHistory in React Router works
-app.get('*', function(req, res){
-	res.sendFile(path.join(__dirname, 'dist', 'index.html'))
+app.get('/', (req, res) => {
+	res.sendFile('index.html')
 })
 
-var PORT = process.env.PORT || 8080
-app.listen(PORT, function(){
-	console.log('SERVER running at localhost:' + PORT )
+io.on('connection', socket =>{
+	console.log('a user connected')
+	
+	
+	socket.on('disconnect', ()=>{
+		console.log('user disconnected')
+	})
+
+	socket.on('chat message', msg=>{
+		io.emit('chat message', msg)
+	})
+})
+
+http.listen(8080, ()=>{
+	console.log('listening on : 8080')
 })

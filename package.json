@@ -1,7 +1,7 @@
 {
-  "name": "my-boilerplate",
+  "name": "my-react-chat",
   "version": "1.0.0",
-  "description": "",
+  "description": "react chat socket.io",
   "main": "index.jsx",
   "scripts": {
     "start": "node server.js",
@@ -16,9 +16,14 @@
     "compression": "^1.6.2",
     "express": "^4.14.0",
     "if-env": "^1.0.0",
+    "immutable": "^3.8.1",
     "react": "^0.14.7",
     "react-dom": "^0.14.7",
-    "react-router": "^2.0.0"
+    "react-redux": "^4.4.5",
+    "react-router": "^2.0.0",
+    "redux": "^3.6.0",
+    "socket.io": "^1.5.1",
+    "socket.io-client": "^1.5.1"
   },
   "devDependencies": {
     "babel-core": "^6.5.1",
@@ -27,6 +32,7 @@
     "babel-preset-react": "^6.5.0",
     "css-loader": "^0.25.0",
     "http-server": "^0.8.5",
+    "morgan": "^1.7.0",
     "style-loader": "^0.13.1",
     "webpack": "^1.12.13",
     "webpack-dev-server": "^1.14.1"
