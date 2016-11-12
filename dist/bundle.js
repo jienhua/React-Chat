@@ -68,45 +68,45 @@
 
 	var _action_creator = __webpack_require__(239);
 
-	var _remote_action_middleware = __webpack_require__(240);
+	var actions = _interopRequireWildcard(_action_creator);
 
-	var _remote_action_middleware2 = _interopRequireDefault(_remote_action_middleware);
+	var _App = __webpack_require__(240);
 
-	var _App = __webpack_require__(241);
+	function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj.default = obj; return newObj; } }
 
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
+	// import remoteActionMiddleware from './remote_action_middleware'
 	var store = (0, _redux.createStore)(_reducer2.default);
 
 	var socket = (0, _socket2.default)();
-	// socket.on('state', state =>{
-	// 	store.dispatch({type: 'SET_STATE', state})
-	// })
-	var sendMessage = function sendMessage(msg) {
-		socket.emit('chat message', msg);
-	};
-	// const messages = ['1123','123','321','123']
-
 	socket.on('chat message', function (msg) {
 		store.dispatch({
 			type: 'SET_MSG',
 			msg: msg
 		});
 	});
-	// function stateChange(messages, callback){
-	// 	setTimeout(()=>{
-	// 		messages.push('show')
-	// 		callback(messages)
-	// 	}, 2000)
-	// }
 
-	// stateChange(messages, (msg)=>{
-	// 	console.log(msg)
-	// })
+	// const createStoreWithMiddleware = applyMiddleware(
+	// 	remoteActionMiddleware(socket)
+	// )(createStore)
+
+	// const store = createStoreWithMiddleware(reducer)
+
 	store.dispatch({
 		type: 'SET_STATE',
-		msgs: [1, 2, 3, 4, 5, 6, 7]
+		state: {
+			msgs: [1, 2, 3, 4, 5, 6]
+		}
 	});
+
+	// socket.on('state', state =>{
+	// 	store.dispatch({type: 'SET_STATE', state})
+	// })
+	// const sendMessage = (msg) =>{
+	// 	socket.emit('chat message', msg)
+	// }
+
 
 	(0, _reactDom.render)(_react2.default.createElement(
 		_reactRedux.Provider,
@@ -34014,14 +34014,23 @@
 				return setState(state, action.state);
 			case 'SET_MSG':
 				return setMsg(state, action.msg);
+			case 'SEND_MSG':
+				sendMsg(action.msg);
 		}
 		return state;
 	};
 
 	var _immutable = __webpack_require__(159);
 
-	function setState(state, newState) {
+	var _socket = __webpack_require__(190);
 
+	var _socket2 = _interopRequireDefault(_socket);
+
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+	var socket = (0, _socket2.default)();
+
+	function setState(state, newState) {
 		return state.merge(newState);
 	}
 
@@ -34030,6 +34039,10 @@
 		return state.merge({
 			msgs: msgs.push(msg)
 		});
+	}
+
+	function sendMsg(msg) {
+		socket.emit('chat message', msg);
 	}
 
 /***/ },
@@ -34042,12 +34055,20 @@
 		value: true
 	});
 	exports.setState = setState;
+	exports.setMsg = setMsg;
 	exports.sendMsg = sendMsg;
 	function setState(state) {
 
 		return {
 			type: 'SET_STATE',
 			state: state
+		};
+	}
+
+	function setMsg(msg) {
+		return {
+			type: 'SET_MSG',
+			msg: msg
 		};
 	}
 
@@ -34061,31 +34082,6 @@
 
 /***/ },
 /* 240 */
-/***/ function(module, exports) {
-
-	'use strict';
-
-	Object.defineProperty(exports, "__esModule", {
-		value: true
-	});
-
-	exports.default = function (socket) {
-		return function (store) {
-			return function (next) {
-				return function (action) {
-
-					console.log('in middleware', action);
-					if (action.meta && action.meta.remote) {
-						socket.emit('action', action);
-					}
-					return next(action);
-				};
-			};
-		};
-	};
-
-/***/ },
-/* 241 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -34103,15 +34099,21 @@
 
 	var _reactRedux = __webpack_require__(181);
 
-	__webpack_require__(242);
+	__webpack_require__(241);
 
-	var _MessageForm = __webpack_require__(246);
+	var _MessageForm = __webpack_require__(245);
 
 	var _MessageForm2 = _interopRequireDefault(_MessageForm);
 
-	var _Messages = __webpack_require__(247);
+	var _Messages = __webpack_require__(246);
 
 	var _Messages2 = _interopRequireDefault(_Messages);
+
+	var _action_creator = __webpack_require__(239);
+
+	var actionCreators = _interopRequireWildcard(_action_creator);
+
+	function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj.default = obj; return newObj; } }
 
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -34129,16 +34131,24 @@
 	    function App() {
 	        _classCallCheck(this, App);
 
-	        return _possibleConstructorReturn(this, (App.__proto__ || Object.getPrototypeOf(App)).apply(this, arguments));
+	        var _this = _possibleConstructorReturn(this, (App.__proto__ || Object.getPrototypeOf(App)).call(this));
+
+	        _this.getMsgs = _this.getMsgs.bind(_this);
+	        return _this;
 	    }
 
 	    _createClass(App, [{
+	        key: 'getMsgs',
+	        value: function getMsgs() {
+	            return this.props.msgs || [];
+	        }
+	    }, {
 	        key: 'render',
 	        value: function render() {
 	            return _react2.default.createElement(
 	                'div',
 	                null,
-	                this.props.msgs.map(function (v, i) {
+	                this.getMsgs().map(function (v, i) {
 	                    return _react2.default.createElement(_Messages2.default, { key: i, msg: v });
 	                }),
 	                _react2.default.createElement(_MessageForm2.default, { sendMsg: this.props.sendMsg })
@@ -34150,6 +34160,8 @@
 	}(_react2.default.Component);
 
 	function mapStateToProps(state) {
+	    console.log(state.toJS());
+	    console.log('mapStateToProps');
 	    return {
 	        msgs: state.get('msgs')
 	    };
@@ -34157,19 +34169,19 @@
 
 	(0, _reactRedux.connect)(mapStateToProps)(App);
 
-	var AppContainer = exports.AppContainer = (0, _reactRedux.connect)(mapStateToProps)(App);
+	var AppContainer = exports.AppContainer = (0, _reactRedux.connect)(mapStateToProps, actionCreators)(App);
 
 /***/ },
-/* 242 */
+/* 241 */
 /***/ function(module, exports, __webpack_require__) {
 
 	// style-loader: Adds some css to the DOM by adding a <style> tag
 
 	// load the styles
-	var content = __webpack_require__(243);
+	var content = __webpack_require__(242);
 	if(typeof content === 'string') content = [[module.id, content, '']];
 	// add the styles to the DOM
-	var update = __webpack_require__(245)(content, {});
+	var update = __webpack_require__(244)(content, {});
 	if(content.locals) module.exports = content.locals;
 	// Hot Module Replacement
 	if(false) {
@@ -34186,10 +34198,10 @@
 	}
 
 /***/ },
-/* 243 */
+/* 242 */
 /***/ function(module, exports, __webpack_require__) {
 
-	exports = module.exports = __webpack_require__(244)();
+	exports = module.exports = __webpack_require__(243)();
 	// imports
 
 
@@ -34200,7 +34212,7 @@
 
 
 /***/ },
-/* 244 */
+/* 243 */
 /***/ function(module, exports) {
 
 	/*
@@ -34256,7 +34268,7 @@
 
 
 /***/ },
-/* 245 */
+/* 244 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/*
@@ -34508,7 +34520,7 @@
 
 
 /***/ },
-/* 246 */
+/* 245 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -34576,7 +34588,7 @@
 	exports.default = MessageForm;
 
 /***/ },
-/* 247 */
+/* 246 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -34591,7 +34603,7 @@
 
 	var _react2 = _interopRequireDefault(_react);
 
-	var _Messages = __webpack_require__(248);
+	var _Messages = __webpack_require__(247);
 
 	var _Messages2 = _interopRequireDefault(_Messages);
 
@@ -34633,16 +34645,16 @@
 	exports.default = Messages;
 
 /***/ },
-/* 248 */
+/* 247 */
 /***/ function(module, exports, __webpack_require__) {
 
 	// style-loader: Adds some css to the DOM by adding a <style> tag
 
 	// load the styles
-	var content = __webpack_require__(249);
+	var content = __webpack_require__(248);
 	if(typeof content === 'string') content = [[module.id, content, '']];
 	// add the styles to the DOM
-	var update = __webpack_require__(245)(content, {});
+	var update = __webpack_require__(244)(content, {});
 	if(content.locals) module.exports = content.locals;
 	// Hot Module Replacement
 	if(false) {
@@ -34659,10 +34671,10 @@
 	}
 
 /***/ },
-/* 249 */
+/* 248 */
 /***/ function(module, exports, __webpack_require__) {
 
-	exports = module.exports = __webpack_require__(244)();
+	exports = module.exports = __webpack_require__(243)();
 	// imports
 
 

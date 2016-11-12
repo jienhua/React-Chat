@@ -31,6 +31,8 @@ class App extends React.Component{
 
 
 function mapStateToProps(state){
+    console.log(state.toJS())
+    console.log('mapStateToProps')
     return {
         msgs: state.get('msgs')
     }

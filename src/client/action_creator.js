@@ -6,6 +6,13 @@ export function setState(state){
 	}
 }
 
+export function setMsg(msg){
+	return {
+		type: 'SET_MSG',
+		msg
+	}
+}
+
 export function sendMsg(msg){
 
 	return {

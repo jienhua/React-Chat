@@ -6,17 +6,25 @@ import {Provider} from 'react-redux'
 import io from 'socket.io-client'
 import reducer from './reducer'
 import {setState} from './action_creator'
-import remoteActionMiddleware from './remote_action_middleware'
-
+// import remoteActionMiddleware from './remote_action_middleware'
+import * as actions from './action_creator'
 
 import {AppContainer} from './components/App'
+const store = createStore(reducer)
 
+const socket = io();
+socket.on('chat message', msg=>{
+	store.dispatch({
+		type: 'SET_MSG',
+		msg: msg
+	})
+})
 
-const createStoreWithMiddleware = applyMiddleware(
-	remoteActionMiddleware(socket)
-)(createStore)
+// const createStoreWithMiddleware = applyMiddleware(
+// 	remoteActionMiddleware(socket)
+// )(createStore)
 
-const store = createStoreWithMiddleware(reducer)
+// const store = createStoreWithMiddleware(reducer)
 
 store.dispatch({
 	type: 'SET_STATE',
@@ -25,14 +33,14 @@ store.dispatch({
 	} 
 })
 
-const socket = io();
+
 
 // socket.on('state', state =>{
 // 	store.dispatch({type: 'SET_STATE', state})
 // })
-const sendMessage = (msg) =>{
-	socket.emit('chat message', msg)
-}
+// const sendMessage = (msg) =>{
+// 	socket.emit('chat message', msg)
+// }
 
 
 
